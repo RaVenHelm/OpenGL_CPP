@@ -7,46 +7,47 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "shader.hpp"
 
 static const GLfloat g_vertex_buffer_data[] = {
-	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-	-1.0f,-1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f, // triangle 1 : end
-	1.0f, 1.0f,-1.0f, // triangle 2 : begin
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f, // triangle 2 : end
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	-1.0f,-1.0f,-1.0f,
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f,
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f
+	-0.5f,-0.5f,-0.5f, // triangle 1 : begin
+	-0.5f,-0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f, // triangle 1 : end
+	0.5f, 0.5f,-0.5f, // triangle 2 : begin
+	-0.5f,-0.5f,-0.5f,
+	-0.5f, 0.5f,-0.5f, // triangle 2 : end
+	0.5f,-0.5f, 0.5f,
+	-0.5f,-0.5f,-0.5f,
+	0.5f,-0.5f,-0.5f,
+	0.5f, 0.5f,-0.5f,
+	0.5f,-0.5f,-0.5f,
+	-0.5f,-0.5f,-0.5f,
+	-0.5f,-0.5f,-0.5f,
+	-0.5f, 0.5f, 0.5f,
+	-0.5f, 0.5f,-0.5f,
+	0.5f,-0.5f, 0.5f,
+	-0.5f,-0.5f, 0.5f,
+	-0.5f,-0.5f,-0.5f,
+	-0.5f, 0.5f, 0.5f,
+	-0.5f,-0.5f, 0.5f,
+	0.5f,-0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f,
+	0.5f,-0.5f,-0.5f,
+	0.5f, 0.5f,-0.5f,
+	0.5f,-0.5f,-0.5f,
+	0.5f, 0.5f, 0.5f,
+	0.5f,-0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f,-0.5f,
+	-0.5f, 0.5f,-0.5f,
+	0.5f, 0.5f, 0.5f,
+	-0.5f, 0.5f,-0.5f,
+	-0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f,
+	0.5f,-0.5f, 0.5f
 };
 
 // One color for each vertex. They were generated randomly.
@@ -124,24 +125,22 @@ int main()
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	
 	GLuint vertex_array_id;
 	glGenVertexArrays(1, &vertex_array_id);
 	glBindVertexArray(vertex_array_id);
+
+	glDepthFunc(GL_LESS);
 
 	// Load shaders
 
 	auto programID = LoadShaders("TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
 	auto matrix_id = glGetUniformLocation(programID, "MVP");
 
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	glm::mat4 view = glm::lookAt(
-		glm::vec3(4, 3, -3),
-		glm::vec3(0, 0, 0),
-		glm::vec3(0, 1, 0)
-	);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	glm::mat4 view = glm::translate(view, glm::vec3(1.0f, 0.0f, -1.0f));
+	glm::mat4 model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
-	auto model = glm::mat4(1.0f);
 	auto mvp = projection * view * model;
 
 	GLuint vertexbuffer;
@@ -154,14 +153,31 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 	
+	auto last_time = glfwGetTime();
+	auto frame_count = 0;
+
+	// "Game" loop
 	do
 	{
+		auto current_time = glfwGetTime();
+		frame_count++;
+
+		// Update if more than one second
+		if (current_time - last_time >= 1.0)
+		{
+			auto spf = 1000.0 / double(frame_count);
+			auto fps = (1.0 / spf) * 1000;
+			fprintf(stdout, "%f ms/frame => %f frame/s\n", spf, fps);
+			frame_count = 0;
+			last_time += 1.0;
+		}
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
 
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
-		glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
+		//glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -188,9 +204,10 @@ int main()
 		);
 
 		glm::mat4 transform;
-		transform = glm::rotate();
+		transform = glm::rotate(transform, (float)(glm::half_pi<double>() * glfwGetTime() * 0.75), glm::vec3(0.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(matrix_id, 1, GL_FALSE, glm::value_ptr(transform));
 
-		// Draw the triangle !
+		// Draw the cube!
 		glDrawArrays(GL_TRIANGLES, 0, 12 * 3); // 12*3 indices starting at 0 -> 12 triangles
 
 		glDisableVertexAttribArray(0);
